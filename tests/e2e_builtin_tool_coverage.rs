@@ -224,7 +224,7 @@ mod tests {
 
         let routine = rig
             .database()
-            .get_routine_by_name("test-user", "daily-check")
+            .get_routine_by_name(rig.owner_id(), "daily-check")
             .await
             .expect("get_routine_by_name")
             .expect("daily-check should exist");
@@ -1222,12 +1222,14 @@ mod tests {
             .expect("tool_search description should be a string");
         assert!(
             tool_search_description.contains("`tool_install`")
-                && tool_search_description.contains("`tool_activate`"),
+                && tool_search_description.contains("`tool_activate(name=\"...\")`"),
             "tool_search description should describe setup/activation via tool_install and \
              tool_activate: {tool_search_description}"
         );
         assert!(
-            tool_search_description.contains("use the `message` tool for proactive outbound sends"),
+            tool_search_description
+                .to_ascii_lowercase()
+                .contains("use the `message` tool for proactive outbound sends"),
             "tool_search description should point outbound sends to message: {tool_search_description}"
         );
 
